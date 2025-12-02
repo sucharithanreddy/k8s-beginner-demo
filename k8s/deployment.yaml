@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: k8s-beginner-demo
+  namespace: demo-app
+  labels:
+    app: k8s-beginner-demo
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: k8s-beginner-demo
+  template:
+    metadata:
+      labels:
+        app: k8s-beginner-demo
+    spec:
+      containers:
+        - name: k8s-beginner-demo
+          image: k8s-beginner-demo:v1
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5000
+          env:
+            - name: APP_ENV
+              value: "k8s-dev"
+            - name: APP_MESSAGE
+              value: "Hello from Kubernetes Deployment! 🌱"
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 5000
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 5000
+            initialDelaySeconds: 15
+            periodSeconds: 20
